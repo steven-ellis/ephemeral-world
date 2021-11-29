@@ -1,7 +1,7 @@
 = Ephemeral World Demo Scripts
 
 This repository is for setup guides and scripts for my presentation on
-Ephemeral environments using Image Builder and https://buildah.io/[buildah].
+Ephemeral environments using https://www.osbuild.org/[Image Builder] and https://buildah.io/[buildah].
 
 This demo and talk leverage these operating systems
 
@@ -25,6 +25,36 @@ Validated Images
 * Fedora-Cloud-Base-35-1.2.x86_64.qcow2 
 
 
+
+
+== Issues / Gotchas
+
+=== Running out of space
+The VM Images we're running are relatively small from a storage perspective so there is a chance
+you'll run out of scratch space if you attempt to create very large images.
+
+
+=== RHEL 9 Beta
+At present the default install of RHEL 9 Beta attempts to use the production RHEL 9 content
+repositories when building images. This issue is similar to the problem under.
+
+* https://access.redhat.com/solutions/5773421
+
+Currently the issue can be resolved by running the following on your RHEL9 VM
+
+[source,bash]
+----
+mkdir -pv /etc/osbuild-composer/repositories
+
+cp /usr/share/osbuild-composer/repositories/rhel-90.json /etc/osbuild-composer/repositories/rhel-90.json
+
+cp -p /etc/osbuild-composer/repositories/rhel-90.json{,.bak}
+
+sed -i -e 's|cdn.redhat.com/content/dist/rhel9|cdn.redhat.com/content/beta/rhel9|' \
+/etc/osbuild-composer/repositories/rhel-90.json
+
+systemctl restart osbuild-worker@.service.d osbuild-worker@1.service osbuild-composer.service
+----
 
 
 == Standards

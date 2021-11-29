@@ -1,0 +1,14 @@
+= Ephemeral World Demo Scripts
+
+This repository is for setup guides and scripts for my presentation on
+Ephemeral environments using Image Builder and buildah
+
+
+== Standards
+
+All documentation will licenced under a http://creativecommons.org/licenses/by-sa/4.0/[Creative Commons Attribution-ShareAlike 4.0 International License],
+whilst code, including Ansible playbooks, will be under a link:LICENSE[GPL v3 licence].
+
+image::https://licensebuttons.net/l/by-sa/4.0/88x31.png[CC BY-SA-4.0 Logo]
+
+All documentation will be treated like code and produced where possible in https://docs.asciidoctor.org/asciidoc/latest[AsciiDoc].

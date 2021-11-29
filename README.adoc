@@ -1,7 +1,30 @@
 = Ephemeral World Demo Scripts
 
 This repository is for setup guides and scripts for my presentation on
-Ephemeral environments using Image Builder and buildah
+Ephemeral environments using Image Builder and https://buildah.io/[buildah].
+
+This demo and talk leverage these operating systems
+
+* https://fedoraproject.org[Fedora 35]
+* https://redhat.com[Red Hat Enterprise Linux 9] *_Beta_*
+
+In line with the talks focus on ephemeral environments we'll leverage cloud ready
+images for the OS than can be rapidly configured via Ansible to demo the
+key technologies.
+
+== Deployment of Cloud / Virt ready OS Images
+
+If you're running this demo code on a cloud hosted environment then simply select their pre-configured
+cloud ready image, and skip to the setup of the demo tooling using Ansible below.
+
+These instructions are for when you're running this locally under KVM + Libvirt.
+
+Validated Images
+
+* rhel-baseos-9.0-beta-0-x86_64-kvm.qcow2 
+* Fedora-Cloud-Base-35-1.2.x86_64.qcow2 
+
+
 
 
 == Standards

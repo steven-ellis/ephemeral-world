@@ -1,0 +1,5 @@
+# Example Hosts file for Ansible
+# Copy this file to "hosts" and update hostname
+# entries to match your existing vms
+[ephemeral_demo]
+my_demo_vm

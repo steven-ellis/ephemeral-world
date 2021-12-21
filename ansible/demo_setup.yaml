@@ -9,9 +9,11 @@
     - ./secrets.yaml
   tasks:
 
-  - name: Enable Red Hat Subscription
+  - name: Enable Red Hat Subscription if we're on RHEL
     include_role: name=register-rhel-subscription
-    when: rh_org_activationkey is defined
+    when: 
+      - rh_org_activationkey is defined
+      - ansible_facts['distribution'] == "RedHat"
 
   - name: Install the cockpit software and dependancies
     yum:

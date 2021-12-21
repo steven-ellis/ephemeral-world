@@ -6,6 +6,7 @@ Ephemeral environments using https://www.osbuild.org/[Image Builder] and https:/
 This demo and talk leverage these operating systems
 
 * https://fedoraproject.org[Fedora 35]
+* https://redhat.com[Red Hat Enterprise Linux 8.x]
 * https://redhat.com[Red Hat Enterprise Linux 9] *_Beta_*
 
 In line with the talks focus on ephemeral environments we'll leverage cloud ready
@@ -22,6 +23,7 @@ These instructions are for when you're running this locally under KVM + Libvirt.
 Validated Images
 
 * rhel-baseos-9.0-beta-0-x86_64-kvm.qcow2 
+* rhel-8.5-x86_64-kvm.qcow2
 * Fedora-Cloud-Base-35-1.2.x86_64.qcow2 
 
 

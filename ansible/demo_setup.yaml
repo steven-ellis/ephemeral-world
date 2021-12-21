@@ -1,0 +1,67 @@
+#
+# ansible-playbook  -i ./hosts ./rhel8_cockpit.yaml
+# 
+---
+- hosts: ephemeral_demo
+  become: True
+  become_user: root
+  vars_files:
+    - ./secrets.yaml
+  tasks:
+
+  - name: Enable Red Hat Subscription
+    include_role: name=register-rhel-subscription
+    when: rh_org_activationkey is defined
+
+  - name: Install the cockpit software and dependancies
+    yum:
+      name: ['cockpit', 'cockpit-storaged', 'cockpit-packagekit']
+      state: present
+
+  - name: Cockpit needs to be running
+    systemd:
+      name: cockpit
+      state: started
+      enabled: yes
+      masked: no
+
+  - name: Install Image Builder and enable for Cockpit
+    yum:
+      name: ['osbuild-composer', 'composer-cli', 'cockpit-composer', 'bash-completion']
+      state: present
+
+  - name: Additional Image Builder service
+    systemd:
+      name: "{{item}}"
+      state: started
+      enabled: yes
+      masked: no
+    with_items:
+     - 'osbuild-composer.socket'
+     - 'cockpit.socket'
+
+  - name: Install buildah and dependancies
+    yum:
+      name: ['podman', 'buildah']
+      state: present
+ 
+
+  - name: Install Firewalld
+    yum: name=firewalld state=present
+
+  - name: Enable Firewalld
+    systemd:
+      name: firewalld
+      state: started
+      enabled: yes
+      masked: no
+
+  - name: Firewalld rules
+    firewalld:
+      service: "{{item}}"
+      immediate: true
+      permanent: true
+      state: enabled
+    with_items:
+     - 'cockpit'
+     - 'ssh'

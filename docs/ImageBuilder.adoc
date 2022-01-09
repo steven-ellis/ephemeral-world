@@ -179,6 +179,23 @@ virt-install --name ${VM_NAME} --memory ${VM_MEMORY} --vcpus ${VM_CPU} \
 virsh console ${VM_NAME}
 ----
 
+== Cleaning up
+
+If you're running this locally just stop and undefine the VM Images
+
+[source,bash]
+----
+VM_NAME=IB_WEB
+virsh destroy ${VM_NAME}
+virsh undefine ${VM_NAME}
+
+
+VM_NAME=Fedora35
+virsh destroy ${VM_NAME}
+virsh undefine ${VM_NAME}
+
+----
+
 == Bugs / Issues
 
 With Fedora 35 we've hit a dependancy issue which means we needed to manually add an additional package *gobject-introspection* when creating

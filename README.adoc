@@ -13,6 +13,9 @@ In line with the talks focus on ephemeral environments we'll leverage cloud read
 images for the OS than can be rapidly configured via Ansible to demo the
 key technologies.
 
+If you don't want to deploy your own environment Red Hat have a number of free to use lab environments
+we'll link too below.
+
 == Deploy and Confiure a simple VM as used for the demo
 
 If you want to try some of the demo code and need a configured host here are some initial steps
@@ -24,11 +27,10 @@ You should be able to connect to cockpit instance running on your demo VM on por
 
 - https://192.168.124.138:9090
 
-== Using Image Builder
+You can now
 
-
-== Using buildah
-
+- try out link:docs/ImageBuilder.adoc[Image Builder]
+- or link:docs/buildah.adoc[buildah]
 
 == Issues / Gotchas
 

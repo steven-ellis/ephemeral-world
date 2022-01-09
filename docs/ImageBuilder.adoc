@@ -1,0 +1,189 @@
+= Using Image Builder
+
+There are ways you can interact with Image Builder, either via the cockpit based web interface, or
+using the cli.
+
+If you haven't deployed your own VM Image (above) you can use Red Hat pre-build lab environments below
+
+- https://lab.redhat.com/imagebuilder[Image Builder Cockpit WebUI]
+- https://lab.redhat.com/imagebuilder-cli[Image Builder CLI]
+
+You can also reference the osbuild user guide
+
+- https://www.osbuild.org/guides/user-guide/user-guide.html
+
+
+To use Image Builder via the WebUI access the cockpit webinterface on your VM on port 9090 and
+there should be an Image Builder link on the left hand colum.
+
+If you're using the CLI we've provided some example toml files to get you started quickly
+
+= Simple Webserver Demo
+Create an initial blueprint *webserver* and add/commit the following packages
+
+----
+httpd
+mod_ssl
+firewalld
+gobject-introspection
+----
+
+Click on the name of your blueprint and then *_Customizations_* where you can set a hostname
+and initial users for this blueprint. I'm going to add a webmaster user with my own SSH Key.
+
+You can now use the CLI to take a look at the blueprint details
+
+[source,bash]
+----
+composer-cli blueprints list
+
+composer-cli blueprints show  webserver
+
+# and save a local copy of the image definition as webserver.toml
+composer-cli blueprints save webserver
+----
+
+If you want to skip ahead you can simply use the supplied link:../osbuilder/webserver.toml[webserver.toml],
+which can be deployed via
+
+[source,bash]
+----
+composer-cli blueprints push webserver.toml
+----
+
+
+
+We can now create a cloud ready image via the WebUI. For my demo I'm going to create a libvirt ready qcow2 image,
+but you can produce cloud provider ready images for AWS, Azure and OpenStack.
+ 
+If you want to use the command line to initiate the build
+
+[source,bash]
+----
+# First confirm which image types are supported
+composer-cli compose types
+
+# And in our case create a qcow2 image
+composer-cli compose start webserver qcow2
+----
+
+The command line provides a lot more immediate feedback than the WebUI, particularly if you've got package dependancy issues.
+
+Once our image has been created we can download it and run it
+
+
+[source,bash]
+----
+VM_NAME=IB_WEB
+VM_MEMORY=2048
+VM_CPU=2
+OS_VARIANT=fedora34
+VM_BRIDGE=virbr1
+
+# Change this to match the location of your image
+VM_IMAGE=/opt/Virtual/images/773342c3-10be-4de6-af77-b23784d2700b-disk.qcow2
+
+virt-install --name ${VM_NAME} --memory ${VM_MEMORY} --vcpus ${VM_CPU} \
+    --disk path=$VM_IMAGE,format=qcow2,bus=scsi,discard=unmap \
+    --os-variant=${OS_VARIANT} \
+    --controller=type=scsi,model=virtio-scsi \
+    --connect qemu:///system \
+    --virt-type kvm \
+    --noautoconsole \
+    --import \
+    --network type=bridge,source=${VM_BRIDGE} --graphics vnc
+
+virsh console ${VM_NAME}
+----
+
+We'll have our webserver instance running, but the httpd service hasn't been enabled. We need to
+customise our link:../osbuilder/webserver.toml[webserver.toml] further to start the service and enable
+the correct firewall ports. When you customise the toml you need to bump the version number before
+you push the blueprint
+
+Additional required sections are
+
+----
+
+  [customizations.firewall]
+    [customizations.firewall.services]
+      enabled = ["ssh", "http", "https"]
+  [customizations.services]
+    enabled = ["sshd", "httpd"]
+
+----
+
+
+We can the update the blueprint and re-create our image
+
+[source,bash]
+----
+composer-cli blueprints push webserver.toml
+
+# This additional step is a quick way to catch a lot of issues
+composer-cli blueprints depsolve webserver
+
+
+composer-cli compose start webserver qcow2
+----
+
+The compose will return a UUID which we can use to monitor the build
+
+[source,bash]
+----
+# Customise the value to match your build
+
+IB_UUID=a9a43d53-6b75-4580-9eb4-f1fa2869f236
+
+composer-cli compose info ${IB_UUID} | head
+
+
+# Check if the build completed OK
+composer-cli compose results ${IB_UUID} 
+
+
+# Review the logs if we've had an issue
+composer-cli compose log ${IB_UUID} 
+
+# and if the build works we can look into the produced tar file
+tar -tf ${IB_UUID}.tar
+----
+
+Follow our deployment setps to re-create our webserver vm with the new image
+
+[source,bash]
+----
+VM_NAME=IB_WEB
+VM_MEMORY=2048
+VM_CPU=2
+OS_VARIANT=fedora34
+VM_BRIDGE=virbr1
+
+# First remove our old image if we haven't done that already
+virsh destroy ${VM_NAME}
+virsh undefine ${VM_NAME}
+
+# Change this to match the location of your image
+VM_IMAGE=/opt/Virtual/images/a9a43d53-6b75-4580-9eb4-f1fa2869f236-disk.qcow2
+
+virt-install --name ${VM_NAME} --memory ${VM_MEMORY} --vcpus ${VM_CPU} \
+    --disk path=$VM_IMAGE,format=qcow2,bus=scsi,discard=unmap \
+    --os-variant=${OS_VARIANT} \
+    --controller=type=scsi,model=virtio-scsi \
+    --connect qemu:///system \
+    --virt-type kvm \
+    --noautoconsole \
+    --import \
+    --network type=bridge,source=${VM_BRIDGE} --graphics vnc
+
+virsh console ${VM_NAME}
+----
+
+== Bugs / Issues
+
+With Fedora 35 we've hit a dependancy issue which means we needed to manually add an additional package *gobject-introspection* when creating
+qcow2 images.
+
+---
+link:buildah.adoc[Try out buildah] or
+link:../README.adoc[Return]

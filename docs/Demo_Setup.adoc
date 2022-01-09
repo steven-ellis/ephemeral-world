@@ -46,7 +46,27 @@ systemctl enable --now cockpit.socket
 
 = Manual Installation
 
-TODO
+If you don't want to use the supplied Ansible playbook you can run the following to install/configure Image Builder's components
+
+[source,bash]
+----
+dnf -y install podman buildah
+
+yum -y install osbuild-composer composer-cli cockpit-composer bash-completion
+yum -y install firewalld
+systemctl enable --now firewalld
+systemctl enable firewalld
+systemctl enable --now osbuild-composer.socket
+systemctl enable cockpit.socket
+firewall-cmd --add-service=cockpit && firewall-cmd --add-service=cockpit --permanent
+----
+
+And for buildah you can run
+
+[source,bash]
+----
+dnf -y install podman buildah
+----
 
 ---
 

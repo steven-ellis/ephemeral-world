@@ -1,11 +1,11 @@
 = Deployment of Cloud / Virt ready OS Images
 
 If you're running this demo code on a cloud hosted environment then simply select their pre-configured
-cloud ready image, and skip to the setup of the demo tooling using Ansible below.
+cloud ready image, and skip to the setup of the demo tooling using link:./Demo_Setup.adoc[Ansible].
 
-These instructions are for when you're running this locally under KVM + Libvirt.
+Follow these instructions to run a local VM under KVM + Libvirt.
 
-Validated Images
+== Validated Images ==
 
 * rhel-baseos-9.0-beta-0-x86_64-kvm.qcow2 
 * rhel-8.5-x86_64-kvm.qcow2

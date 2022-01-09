@@ -3,7 +3,7 @@ distro = ""
 groups = []
 modules = []
 name = "webserver"
-version = "0.0.3"
+version = "0.0.4"
 
 [customizations]
   hostname = "mywebserver.io"
@@ -25,4 +25,7 @@ version = "0.0.3"
 
 [[packages]]
   name = "firewalld"
+
+[[packages]]
+  name = "gobject-introspection"
   version = "*"

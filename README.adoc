@@ -30,7 +30,7 @@ You should be able to connect to cockpit instance running on your demo VM on por
 You can now
 
 - try out link:docs/ImageBuilder.adoc[Image Builder]
-- or link:docs/buildah.adoc[buildah]
+- or link:docs/Buildah.adoc[buildah]
 
 == Issues / Gotchas
 

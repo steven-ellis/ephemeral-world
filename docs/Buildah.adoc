@@ -1,0 +1,69 @@
+= Using Buildah
+
+Whilst we do have a cockpit extension for managing containers via Podman, we'll be
+interacting with link:https://buildah.io/[Buildah] on the command line.
+
+We recommend copying our git repository onto your Demo VM so you have access to the
+associated build files and scripts
+
+[source,bash]
+----
+dnf -y install git
+git clone  https://github.com/steven-ellis/ephemeral-world.git
+----
+
+We're going to use the RHEL UBI minimal images to build these demo containers
+as these are freely redistributable base container images that are well maintained
+by Red Hat. 
+
+== Simple webserver container
+
+On our build VM we will create a very simple 
+link:../buildah/ubi-minimal-httpd/Dockerfile[webserver image] with a dummy
+link:../buildah/ubi-minimal-httpd/index.html[index.html]
+
+
+[source,bash]
+----
+cd ~/ephemeral-world/buildah
+cd ubi-minimal-httpd
+buildah build-using-dockerfile -t ubi-minimal-httpd .
+
+buildah images
+----
+
+Then to test the image we'll use podman
+
+[source,bash]
+----
+
+podman run -d -p 8000:80 --name simple-httpd localhost/ubi-minimal-httpd
+
+curl http://localhost:8000/
+----
+
+You can also look at the container via
+
+
+[source,bash]
+----
+
+podman ps
+podman logs -f simple-httpd
+
+# and stop the container
+podman stop simple-httpd
+----
+
+
+
+== Bugs / Issues
+
+You need to be careful of your RPM versions if you're going to work with ubi-micro images.
+These images build outside of the container and your host needs to support the RPM database
+technology for the target image. For example you can't build a RHEL8 ubi-micro image on
+Fedora 35 as it used a newer RPM DB format
+
+---
+link:ImageBuilder.adoc[Go back to Image Builder] or
+link:../README.adoc[Return]

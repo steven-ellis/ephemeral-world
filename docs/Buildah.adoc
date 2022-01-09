@@ -3,15 +3,6 @@
 Whilst we do have a cockpit extension for managing containers via Podman, we'll be
 interacting with link:https://buildah.io/[Buildah] on the command line.
 
-We recommend copying our git repository onto your Demo VM so you have access to the
-associated build files and scripts
-
-[source,bash]
-----
-dnf -y install git
-git clone  https://github.com/steven-ellis/ephemeral-world.git
-----
-
 We're going to use the RHEL UBI minimal images to build these demo containers
 as these are freely redistributable base container images that are well maintained
 by Red Hat. 
@@ -25,7 +16,7 @@ link:../buildah/ubi-minimal-httpd/index.html[index.html]
 
 [source,bash]
 ----
-cd ~/ephemeral-world/buildah
+cd /opt/ephemeral-world/buildah
 cd ubi-minimal-httpd
 buildah build-using-dockerfile -t ubi-minimal-httpd .
 
@@ -53,6 +44,10 @@ podman logs -f simple-httpd
 
 # and stop the container
 podman stop simple-httpd
+podman rm simple-httpd
+
+# and if we want we can clean up the built image
+podman rmi simple-httpd
 ----
 
 

@@ -7,6 +7,9 @@
   become_user: root
   vars_files:
     - ./secrets.yaml
+  vars:
+    repo: https://github.com/steven-ellis/ephemeral-world.git
+    branch: main 
   tasks:
 
   - name: Enable Red Hat Subscription if we're on RHEL
@@ -67,3 +70,15 @@
     with_items:
      - 'cockpit'
      - 'ssh'
+
+  - name: install git
+    yum:
+      state: latest
+      name: git
+
+  - name: clone repo
+    git:
+      repo: "{{ repo }}" 
+      dest: /opt/ephemeral-world
+      version: "{{ branch }}"
+

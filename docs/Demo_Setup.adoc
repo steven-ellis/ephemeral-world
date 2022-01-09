@@ -68,6 +68,16 @@ And for buildah you can run
 dnf -y install podman buildah
 ----
 
+We recommend copying our git repository onto your Demo VM so you have access to the
+associated build files and scripts.
+
+[source,bash]
+----
+dnf -y install git
+cd /opt
+git clone  https://github.com/steven-ellis/ephemeral-world.git
+----
+
 ---
 
 link:../README.adoc[Return]

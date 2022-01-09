@@ -44,11 +44,11 @@ composer-cli blueprints save webserver
 ----
 
 If you want to skip ahead you can simply use the supplied link:../osbuilder/webserver.toml[webserver.toml],
-which can be deployed via
+which can be deployed as follows if you've got a local copy of the git repo.
 
 [source,bash]
 ----
-composer-cli blueprints push webserver.toml
+composer-cli blueprints push /opt/ephemeral-world/osbuilder/webserver.toml
 ----
 
 
@@ -185,5 +185,5 @@ With Fedora 35 we've hit a dependancy issue which means we needed to manually ad
 qcow2 images.
 
 ---
-link:buildah.adoc[Try out buildah] or
+link:Buildah.adoc[Try out buildah] or
 link:../README.adoc[Return]

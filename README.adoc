@@ -13,104 +13,21 @@ In line with the talks focus on ephemeral environments we'll leverage cloud read
 images for the OS than can be rapidly configured via Ansible to demo the
 key technologies.
 
-== Deployment of Cloud / Virt ready OS Images
+== Deploy and Confiure a simple VM as used for the demo
 
-If you're running this demo code on a cloud hosted environment then simply select their pre-configured
-cloud ready image, and skip to the setup of the demo tooling using Ansible below.
+If you want to try some of the demo code and need a configured host here are some initial steps
 
-These instructions are for when you're running this locally under KVM + Libvirt.
+- Deploy a link:docs/Demo_VM.adoc[local or cloud hosted linux environment]
+- Then use link:docs/Demo_Setup.adoc[Ansible to install and configure buildah and Image Builder]
 
-Validated Images
+You should be able to connect to cockpit instance running on your demo VM on port 9090, eg
 
-* rhel-baseos-9.0-beta-0-x86_64-kvm.qcow2 
-* rhel-8.5-x86_64-kvm.qcow2
-* Fedora-Cloud-Base-35-1.2.x86_64.qcow2 
+- https://192.168.124.138:9090
 
-The process I'm using is I create a working snapshot off the working image and then 
-customize the image to set a simple password for the root user. Ideally we should be using
-the cloud-init capabilities to inject a valid user and credentials, but this is a quick
-hack to speed up this demo deployment.
-
-=== Deploy Fedora VM under KVM ===
-
-[source,bash]
-----
-VM_NAME=Fedora35
-VM_MEMORY=2048
-VM_CPU=2
-OS_VARIANT=fedora34
-VM_BRIDGE=virbr1
-
-VM_BASE=/opt/Virtual/ISO/Fedora-Cloud-Base-35-1.2.x86_64.qcow2
-VM_IMAGE=/opt/Virtual/images/Fedora-35.qcow2
-
-qemu-img create -f qcow2 -F qcow2 \
--o backing_file=${VM_BASE} ${VM_IMAGE}
-
-virt-customize -a ${VM_IMAGE} \
--root-password password:password --uninstall cloud-init
-
-# Then Create the VM
-
-virt-install --name ${VM_NAME} --memory ${VM_MEMORY} --vcpus ${VM_CPU} \
-    --disk path=$VM_IMAGE,format=qcow2,bus=scsi,discard=unmap \
-    --os-variant=${OS_VARIANT} \
-    --controller=type=scsi,model=virtio-scsi \
-    --connect qemu:///system \
-    --virt-type kvm \
-    --noautoconsole \
-    --import \
-    --network type=bridge,source=${VM_BRIDGE} --graphics vnc
-
-virsh console ${VM_NAME}
-
-----
-
-As SSH as root is disabled by default in Fedora 35 login intially via the virsh console and type
-
-[source,bash]
-----
-echo "PermitRootLogin yes" > /etc/ssh/sshd_config.d/01-permitrootlogin.conf
-systemctl restart sshd
-----
-
-I also recommend adding an entry in ~/.ssh/config with the correct IP address for your VM
-which will simplify running the ansible playbook.
-
-----
-Host fedora35
-Hostname 192.168.124.138
-StrictHostKeyChecking no
-UserKnownHostsFile /dev/null
-User root
-----
-
-You should then enable login via your ssh-key so that Ansible can automate the rest of the setup
+== Using Image Builder
 
 
-[source,bash]
-----
-ssh-copy-id fedora35
-----
-
-== Install / Configure buildah and Image Builder via Ansible
-
-In the link:ansible[ansible] folder we've supplied a link:ansible/hosts.example[hosts.example]. Copy this to ansible/hosts
-and customise based on the hostname of your buildah/ImageBuilder VM.
-
-If you're running using a Red Hat Enterprise Linux based VM you'll need to make sure this is registered correctly
-to pull packages from Red Hat's CDN service.  The ansible playbook with automate the registration providing you've got a valid secrets.yaml.
-A sample link:ansible/secrets.yaml.example[secrets.yaml.example] has been provided which you'll need to update with a valid activation
-key and organisation id.
-
-You can then simply run the following to complete the setup of a demo environment.
-
-[source,bash]
-----
-cd ansible
-ansible-playbook -i hosts demo_setup.yaml
-----
-
+== Using buildah
 
 
 == Issues / Gotchas

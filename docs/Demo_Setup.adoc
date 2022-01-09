@@ -1,0 +1,53 @@
+= Install / Configure buildah and Image Builder via Ansible
+
+In the link:../ansible[ansible] folder we've supplied a link:../ansible/hosts.example[hosts.example]. Copy this to ansible/hosts
+and customise based on the hostname of your buildah/ImageBuilder VM.
+
+[source,bash]
+----
+cd ansible
+cp hosts.example hosts
+nano hosts
+
+cd -
+----
+
+
+*NOTE* If you're running using a Red Hat Enterprise Linux based VM you'll need to make sure this is registered correctly
+to pull packages from Red Hat's CDN service.  The supplied ansible playbook will automate the registration providing you've got a valid secrets.yaml.
+A sample link:../ansible/secrets.yaml.example[secrets.yaml.example] has been provided which you'll need to update with a valid activation
+key and organisation id.
+
+[source,bash]
+----
+cd ansible
+cp secrets.yaml.example secrets.yaml
+nano secrets.yaml
+
+cd -
+----
+
+You can then simply run the following to complete the setup of a demo environment.
+
+[source,bash]
+----
+cd ansible
+ansible-playbook -i hosts demo_setup.yaml
+----
+
+
+There currently appears to be an issue where cockpit doesn't start correctly. This can be resolved by restarting
+the virtual machine, or manually running the following on your VM Host
+
+[source,bash]
+----
+systemctl enable --now cockpit.socket
+----
+
+= Manual Installation
+
+TODO
+
+---
+
+link:../README.adoc[Return]

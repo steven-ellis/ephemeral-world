@@ -65,6 +65,9 @@ composer-cli compose types
 
 # And in our case create a qcow2 image
 composer-cli compose start webserver qcow2
+
+# Check what compose jobs are running
+composer-cli compose list
 ----
 
 The command line provides a lot more immediate feedback than the WebUI, particularly if you've got package dependancy issues.
@@ -131,23 +134,24 @@ The compose will return a UUID which we can use to monitor the build
 
 [source,bash]
 ----
-# Customise the value to match your build
+# Customise this variable to match your build
 
 IB_UUID=a9a43d53-6b75-4580-9eb4-f1fa2869f236
 
 composer-cli compose info ${IB_UUID} | head
 
 
-# Check if the build completed OK
-composer-cli compose results ${IB_UUID} 
-
-
 # Review the logs if we've had an issue
 composer-cli compose log ${IB_UUID} 
+
+# Check if the build completed OK and grab the tar of the image and logs
+composer-cli compose results ${IB_UUID} 
 
 # and if the build works we can look into the produced tar file
 tar -tf ${IB_UUID}.tar
 ----
+
+We now grab that qcow image either from the tar file or via the cockpit webui.
 
 Follow our deployment setps to re-create our webserver vm with the new image
 
@@ -179,9 +183,38 @@ virt-install --name ${VM_NAME} --memory ${VM_MEMORY} --vcpus ${VM_CPU} \
 virsh console ${VM_NAME}
 ----
 
+== Troubleshooting
+
+As we've already shown above you can check on the status of a build and associated logs as follows
+
+[source,bash]
+----
+IB_UUID=a9a43d53-6b75-4580-9eb4-f1fa2869f236
+
+composer-cli compose info ${IB_UUID} | head
+
+# Review the logs if we've had an issue
+composer-cli compose log ${IB_UUID} 
+
+# And to check on the UUIDs of any jobs
+composer-cli compose list
+----
+
+It is also usful to make sure your image definition has no outstanding dependancy issues
+
+[source,bash]
+----
+# Check what blueprints we've got defined
+composer-cli blueprints list
+
+# Perform a dependancy check
+composer-cli blueprints depsolve webserver
+----
+
+
 == Cleaning up
 
-If you're running this locally just stop and undefine the VM Images
+If you're running this locally just stop and undefine the VM Images,
 
 [source,bash]
 ----

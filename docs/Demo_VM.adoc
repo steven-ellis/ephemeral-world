@@ -16,7 +16,19 @@ customize the image to set a simple password for the root user. Ideally we shoul
 the cloud-init capabilities to inject a valid user and credentials, but this is a quick
 hack to speed up this demo deployment.
 
+== Deployment Customisation
+You will need to update the following varibles to suit you local KVM environment
+
+- VM_BRIDGE to match the network you're using
+- VM_BASE to the location of the base qcow image we're working off
+- VM_IMAGE to the location you want to use for the working image.
+
+The current process uses ``virt-customize`` to strip out cloud-init
+from the base image and set an initial password for the root user to
+_password_.
+
 == Deploy Fedora VM under KVM 
+
 
 [source,bash]
 ----
@@ -28,6 +40,76 @@ VM_BRIDGE=virbr1
 
 VM_BASE=/opt/Virtual/ISO/Fedora-Cloud-Base-35-1.2.x86_64.qcow2
 VM_IMAGE=/opt/Virtual/images/Fedora-35.qcow2
+
+# Create our working snapshot
+qemu-img create -f qcow2 -F qcow2 \
+-o backing_file=${VM_BASE} ${VM_IMAGE}
+
+# Enable root password login and remove cloud-init
+virt-customize -a ${VM_IMAGE} \
+-root-password password:password --uninstall cloud-init \
+--run-command 'echo PermitRootLogin yes >> /etc/ssh/sshd_config' 
+
+# Then Create the VM
+
+virt-install --name ${VM_NAME} --memory ${VM_MEMORY} --vcpus ${VM_CPU} \
+    --disk path=$VM_IMAGE,format=qcow2,bus=scsi,discard=unmap \
+    --os-variant=${OS_VARIANT} \
+    --controller=type=scsi,model=virtio-scsi \
+    --connect qemu:///system \
+    --virt-type kvm \
+    --noautoconsole \
+    --import \
+    --network type=bridge,source=${VM_BRIDGE} --graphics vnc
+
+virsh console ${VM_NAME}
+
+----
+
+Normally SSH as root is disabled by default in a Fedora Image, our ``virt-customize`` line
+re-adds this capability. If you're working with a vanilla cloud image on AWS or Azure you might
+need to type the following via a remote console.
+
+[source,bash]
+----
+echo "PermitRootLogin yes" > /etc/ssh/sshd_config.d/01-permitrootlogin.conf
+systemctl restart sshd
+----
+
+I also recommend adding an entry in ~/.ssh/config with the correct IP address for your VM
+which will simplify running the ansible playbook. If you're using KVM you should see the
+IP address in the virsh console.
+
+----
+Host fedora35
+Hostname 192.168.124.138
+StrictHostKeyChecking no
+UserKnownHostsFile /dev/null
+User root
+----
+
+You should then enable login via your ssh-key so that Ansible can automate the rest of the setup
+
+
+[source,bash]
+----
+ssh-copy-id fedora35
+----
+
+== Deploy a RHEL 8.5 VM under KVM
+
+This is effectively the same as the Fedora version
+
+[source,bash]
+----
+VM_NAME=RHEL85
+VM_MEMORY=2048
+VM_CPU=2
+OS_VARIANT=rhel8.5
+VM_BRIDGE=virbr1
+
+VM_BASE=/opt/Virtual/ISO/rhel-8.5-x86_64-kvm.qcow2
+VM_IMAGE=/opt/Virtual/images/RHEL-85.qcow2
 
 qemu-img create -f qcow2 -F qcow2 \
 -o backing_file=${VM_BASE} ${VM_IMAGE}
@@ -51,20 +133,14 @@ virsh console ${VM_NAME}
 
 ----
 
-As SSH as root is disabled by default in Fedora 35 login intially via the virsh console and type
-
-[source,bash]
-----
-echo "PermitRootLogin yes" > /etc/ssh/sshd_config.d/01-permitrootlogin.conf
-systemctl restart sshd
-----
+One big difference with RHEL 8.x is we don't need to tweak the sshd_config.
 
 I also recommend adding an entry in ~/.ssh/config with the correct IP address for your VM
 which will simplify running the ansible playbook.
 
 ----
-Host fedora35
-Hostname 192.168.124.138
+Host rhel85
+Hostname 192.168.124.160
 StrictHostKeyChecking no
 UserKnownHostsFile /dev/null
 User root
@@ -75,7 +151,17 @@ You should then enable login via your ssh-key so that Ansible can automate the r
 
 [source,bash]
 ----
-ssh-copy-id fedora35
+ssh-copy-id rhel85
+----
+
+== Environment Cleanup
+Providing you've got the same shell open you can quickly clean up the deployed environment via
+
+[source,bash]
+----
+virsh destroy ${VM_NAME}
+virsh undefine ${VM_NAME}
+rm ${VM_IMAGE} 
 ----
 
 ---

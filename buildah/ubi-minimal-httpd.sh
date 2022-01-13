@@ -8,6 +8,9 @@ ctr1=$(buildah from "${1:-registry.access.redhat.com/ubi8/ubi-minimal:latest}")
 buildah run "$ctr1" -- microdnf update -y
 buildah run "$ctr1" -- microdnf install -y httpd
 
+## Grab our index.html
+buildah copy "$ctr1" ubi-minimal-httpd/index.html /var/www/html
+
 ## Include some buildtime annotations
 buildah config --annotation "com.example.build.host=$(uname -n)" "$ctr1"
 

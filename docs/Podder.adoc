@@ -1,0 +1,118 @@
+= Podder image for running our containers
+
+This follows on from our link:ImageBuilder.adoc[Image Builder] example
+
+We're going to build a baseline image to host running our buildah based container images.
+
+
+= Simple Podman Demo
+If you're using the cockpit based Image Builder webui - create an initial blueprint *Podder* and add/commit the following packages
+
+----
+podman
+----
+
+Click on the name of your blueprint and then *_Customizations_* where you can set a hostname
+and initial users for this blueprint. I'm going to add a podder user with my own SSH Key.
+
+You can now use the CLI to take a look at the blueprint details
+
+[source,bash]
+----
+composer-cli blueprints list
+
+composer-cli blueprints show  Podder
+
+# and save a local copy of the image definition as Podder.toml
+composer-cli blueprints save Podder
+----
+
+If you want to skip ahead you can simply use the supplied link:../blueprints/Podder.toml[Podder.toml],
+which can be deployed as follows if you've got a local copy of the git repo.
+
+[source,bash]
+----
+composer-cli blueprints push /opt/ephemeral-world/blueprints/Podder.toml
+----
+
+Again for the purposes of our demo we're going to create a simple qcow2 image
+
+[source,bash]
+----
+# First confirm which image types are supported
+composer-cli compose types
+
+# And in our case create a qcow2 image
+composer-cli compose start Podder qcow2
+----
+
+The compose will return a UUID which we can use to monitor the build
+
+[source,bash]
+----
+# Customise this variable to match your build
+
+POD_UUID=a9a43d53-6b75-4580-9eb4-f1fa2869f236
+
+composer-cli compose info ${POD_UUID} | head
+
+
+# Review the logs if we've had an issue
+composer-cli compose log ${POD_UUID} 
+
+# Check if the build completed OK and grab the tar of the image and logs
+composer-cli compose results ${POD_UUID} 
+
+# and if the build works we can look into the produced tar file
+tar -tf ${POD_UUID}.tar
+----
+
+We now grab that qcow image either from the tar file or via the cockpit webui.
+
+Follow our deployment setps to re-create our webserver vm with the new image
+
+[source,bash]
+----
+VM_NAME=PODDER_HOST
+VM_MEMORY=2048
+VM_CPU=2
+OS_VARIANT=fedora34
+VM_BRIDGE=virbr1
+
+# First remove our old image if we haven't done that already
+virsh destroy ${VM_NAME}
+virsh undefine ${VM_NAME}
+
+# Change this to match the location of your image
+VM_IMAGE=/opt/Virtual/images/a9a43d53-6b75-4580-9eb4-f1fa2869f236-disk.qcow2
+
+virt-install --name ${VM_NAME} --memory ${VM_MEMORY} --vcpus ${VM_CPU} \
+    --disk path=$VM_IMAGE,format=qcow2,bus=scsi,discard=unmap \
+    --os-variant=${OS_VARIANT} \
+    --controller=type=scsi,model=virtio-scsi \
+    --connect qemu:///system \
+    --virt-type kvm \
+    --noautoconsole \
+    --import \
+    --network type=bridge,source=${VM_BRIDGE} --graphics vnc
+
+virsh console ${VM_NAME}
+----
+
+== Cleaning up
+
+If you're running this locally just stop and undefine the VM Images,
+
+[source,bash]
+----
+VM_NAME=PODDER_HOST
+virsh destroy ${VM_NAME}
+virsh undefine ${VM_NAME}
+----
+
+== Bugs / Issues
+
+
+---
+link:Buildah.adoc[Try out buildah] or
+link:../README.adoc[Return]

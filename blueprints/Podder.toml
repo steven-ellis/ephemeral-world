@@ -1,0 +1,21 @@
+# composer-cli blueprints show Podder
+name = "podder"
+description = "Container Ready Host"
+version = "0.0.2"
+modules = []
+groups = []
+distro = ""
+
+[[packages]]
+name = "podman"
+version = "*"
+
+[customizations]
+
+[[customizations.user]]
+name = "podder"
+description = "podder"
+password = "$6$jxj8GZQ0Pkrz/ROw$TzYn59ccGFGe2gq7o/adnmYIHl0nGWYlMwaZa2L9THH77/4gZV/ucfHka4QdMQnPEGw3zm4ejpVyetxKPCZjB."
+key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQD1+wnJsV3ua2c3KITsyT4fYRxX3WiET/w0SDP/juFlmWQvwKnWpEniDTknitEfEcO217rDkkHBqdTP69aKxwYbqrXeTZnvgbhpcs5bPwGMQmU/xm966oSGNHnLS1WuILAXwtu/0JtwPLCcfHqjV8oIOaujfooSVTU2NutPwolsnB5izHRKr5HYOM5hZf6V2Z7DOYEqzOp/zrniLLoDHS3l9HT93Oh8BaLfwsCsG8xBBsCCOMaJQEAlBNYUgZ/gGLP619bZYWkxtk6nq0M59VET+R6NtiDR2oCDKLoAP+gJv5PCOeAux4rezJp74kr+EWh3yrkgLaoprc05/vvpa5g2yvV3+iX+FSEr2mEzga6PNGTvpVXNnCTMg7ofvNmaOov3chU0LsoNpFcbX2ncgjUesYKtS1/sm7dYNVX0rf7ZRNDkLg09QdRhpM+26Z5+v4N1QbmGOAHQ5znpT2FPl1xQEvW8QwwSj2qkVVcdVhglxuoQh17jRbvYbZlwzLbRvgcwpZDiibgowAaMzPUViSwd/YyCsrrZEn9/bHW8AZAfzjjSoOZDI/UknmeATG9B3qVyFC6Fgx7I1rXzdzj6l0+Kn5Byssvvd+VDoO4i6T0Gu4GT6oPRmz63nbPu5m2fTfldwMOYPLZRlQ5bTkWrV7p8fTHJAidlYZCNpJUlMFE0JQ== me@demo"
+groups = ["wheel"]
+

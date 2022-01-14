@@ -4,5 +4,6 @@
   files = [
     '''^\.?gitleaks.toml$''',
     '''webserver.toml$''',
+    '''Podder.toml$''',
   ]
 

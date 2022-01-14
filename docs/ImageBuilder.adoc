@@ -43,12 +43,12 @@ composer-cli blueprints show  webserver
 composer-cli blueprints save webserver
 ----
 
-If you want to skip ahead you can simply use the supplied link:../osbuild/webserver.toml[webserver.toml],
+If you want to skip ahead you can simply use the supplied link:../blueprints/webserver.toml[webserver.toml],
 which can be deployed as follows if you've got a local copy of the git repo.
 
 [source,bash]
 ----
-composer-cli blueprints push /opt/ephemeral-world/osbuild/webserver.toml
+composer-cli blueprints push /opt/ephemeral-world/blueprints/webserver.toml
 ----
 
 
@@ -100,7 +100,7 @@ virsh console ${VM_NAME}
 ----
 
 We'll have our webserver instance running, but the httpd service hasn't been enabled. We need to
-customise our link:../osbuild/webserver.toml[webserver.toml] further to start the service and enable
+customise our link:../blueprints/webserver.toml[webserver.toml] further to start the service and enable
 the correct firewall ports. When you customise the toml you need to bump the version number before
 you push the blueprint
 

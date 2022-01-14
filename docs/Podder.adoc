@@ -6,7 +6,7 @@ We're going to build a baseline image to host running our buildah based containe
 
 
 = Simple Podman Demo
-If you're using the cockpit based Image Builder webui - create an initial blueprint *Podder* and add/commit the following packages
+If you're using the cockpit based Image Builder webui - create an initial blueprint *podder* and add/commit the following packages
 
 ----
 podman
@@ -21,18 +21,18 @@ You can now use the CLI to take a look at the blueprint details
 ----
 composer-cli blueprints list
 
-composer-cli blueprints show  Podder
+composer-cli blueprints show  podder
 
-# and save a local copy of the image definition as Podder.toml
-composer-cli blueprints save Podder
+# and save a local copy of the image definition as podder.toml
+composer-cli blueprints save podder
 ----
 
-If you want to skip ahead you can simply use the supplied link:../blueprints/Podder.toml[Podder.toml],
+If you want to skip ahead you can simply use the supplied link:../blueprints/podder.toml[podder.toml],
 which can be deployed as follows if you've got a local copy of the git repo.
 
 [source,bash]
 ----
-composer-cli blueprints push /opt/ephemeral-world/blueprints/Podder.toml
+composer-cli blueprints push /opt/ephemeral-world/blueprints/podder.toml
 ----
 
 Again for the purposes of our demo we're going to create a simple qcow2 image
@@ -43,7 +43,7 @@ Again for the purposes of our demo we're going to create a simple qcow2 image
 composer-cli compose types
 
 # And in our case create a qcow2 image
-composer-cli compose start Podder qcow2
+composer-cli compose start podder qcow2
 ----
 
 The compose will return a UUID which we can use to monitor the build

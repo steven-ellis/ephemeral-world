@@ -1,7 +1,7 @@
 # composer-cli blueprints show Podder
 name = "podder"
 description = "Container Ready Host"
-version = "0.0.2"
+version = "0.0.3"
 modules = []
 groups = []
 distro = ""
@@ -9,6 +9,10 @@ distro = ""
 [[packages]]
 name = "podman"
 version = "*"
+
+[[packages]]
+  name = "container-selinux"
+  version = "*"
 
 [customizations]
 

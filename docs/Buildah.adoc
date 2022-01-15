@@ -46,7 +46,7 @@ podman stop simple-httpd
 podman rm simple-httpd
 
 # and if we want we can clean up the built image
-podman rmi simple-httpd
+podman rmi localhost/ubi-minimal-httpd
 ----
 
 == Scripted vs Dockerfile

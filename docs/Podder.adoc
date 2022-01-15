@@ -84,7 +84,7 @@ virsh destroy ${VM_NAME}
 virsh undefine ${VM_NAME}
 
 # Change this to match the location of your image
-VM_IMAGE=/opt/Virtual/images/a9a43d53-6b75-4580-9eb4-f1fa2869f236-disk.qcow2
+VM_IMAGE=/opt/Virtual/images/af977f21-5192-4a39-990d-b5d1984d7ea8-disk.qcow2
 
 virt-install --name ${VM_NAME} --memory ${VM_MEMORY} --vcpus ${VM_CPU} \
     --disk path=$VM_IMAGE,format=qcow2,bus=scsi,discard=unmap \

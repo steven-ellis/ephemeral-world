@@ -21,4 +21,15 @@ yum install \
 yum clean all \
     --installroot $micromount
 buildah umount $microcontainer
+
+## Grab our index.html
+buildah copy "$microcontainer" ubi-minimal-httpd/index.html /var/www/html
+
+## Include some buildtime annotations
+buildah config --annotation "com.example.build.host=$(uname -n)" "$microcontainer"
+
+## Run our server and expose the port
+buildah config --cmd "/usr/sbin/httpd -DFOREGROUND" "$microcontainer"
+buildah config --port 80 "$microcontainer"
+
 buildah commit $microcontainer ubi-micro-httpd

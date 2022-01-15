@@ -30,6 +30,8 @@ Then to test the image we'll use podman
 
 podman run -d -p 8000:80 --name simple-httpd localhost/ubi-minimal-httpd
 
+podman ps
+
 curl http://localhost:8000/
 ----
 
@@ -72,6 +74,8 @@ We can test this again using podman
 
 podman run -d -p 8000:80 --name simple-httpd localhost/ubi-minimal-scripted-httpd
 
+podman ps
+
 curl http://localhost:8000/
 ----
 
@@ -82,6 +86,48 @@ Once finished we can stop and clean up the container
 podman stop simple-httpd
 podman rm simple-httpd
 ----
+
+== Using ubi-micro Images
+
+The newer Red Hat provided link:https://www.redhat.com/en/blog/introduction-ubi-micro[UBI Micro images] are really really stripped down and don't
+have any package management tooling like yum/dnf/microdnf. Hence we need to script
+any setup externally.
+
+We've provided an equivalent build script for our webserver example
+link:../buildah/ubi-micro-httpd.sh[ubi-micro-httpd.sh].
+
+One additional gotacha is the build system has be a subscribed Red Hat Enterprise
+Linux instance, so we'll use the RHEL 8.5 Demo VM from our link:./Demo_VM.adoc[Demo VM] Setup guide.
+
+[source,bash]
+----
+cd /opt/ephemeral-world/buildah
+cat ubi-micro-httpd.sh
+
+./ubi-micro-httpd.sh
+
+buildah images
+----
+
+We can test this again using podman
+[source,bash]
+----
+
+podman run -d -p 8000:80 --name simple-httpd localhost/ubi-micro-httpd
+
+podman ps
+
+curl http://localhost:8000/
+----
+
+Once finished we can stop and clean up the container
+
+[source,bash]
+----
+podman stop simple-httpd
+podman rm simple-httpd
+----
+
 
 == Red Hat Provided Apache Image
 

@@ -99,6 +99,31 @@ virt-install --name ${VM_NAME} --memory ${VM_MEMORY} --vcpus ${VM_CPU} \
 virsh console ${VM_NAME}
 ----
 
+== Testing the image
+
+I recommend adding an entry in ~/.ssh/config with the correct IP address for your VM.
+We've also supplied a demo SSH Private Key you can use.
+
+[source,bash]
+----
+Host podder
+Hostname 192.168.124.171
+StrictHostKeyChecking no
+UserKnownHostsFile /dev/null
+IdentityFile ~/.ssh/demo_key
+User podder
+----
+
+You can then SSH into the host and deploy containers as your podder user
+
+[source,bash]
+----
+$ ssh podder
+$ podman -v
+podman version 3.3.1
+
+----
+
 == Cleaning up
 
 If you're running this locally just stop and undefine the VM Images,

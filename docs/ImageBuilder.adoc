@@ -183,6 +183,31 @@ virt-install --name ${VM_NAME} --memory ${VM_MEMORY} --vcpus ${VM_CPU} \
 virsh console ${VM_NAME}
 ----
 
+== Testing the image
+
+I recommend adding an entry in ~/.ssh/config with the correct IP address for your VM.
+We've also supplied a demo SSH Private Key you can use.
+
+[source,bash]
+----
+Host demoweb
+Hostname 192.168.124.140
+StrictHostKeyChecking no
+UserKnownHostsFile /dev/null
+IdentityFile ~/.ssh/demo_key
+User webmaster
+
+----
+
+You can then SSH into the host and check that httpd is running
+
+[source,bash]
+----
+$ ssh demoweb
+$ ps -eaf | grep httpd
+
+----
+
 == Troubleshooting
 
 As we've already shown above you can check on the status of a build and associated logs as follows

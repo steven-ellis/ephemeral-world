@@ -102,7 +102,7 @@ virsh console ${VM_NAME}
 == Testing the image
 
 I recommend adding an entry in ~/.ssh/config with the correct IP address for your VM.
-We've also supplied a demo SSH Private Key you can use.
+We've also supplied a demo SSH link:../keys/demo_key[Private Key] you can use.
 
 [source,bash]
 ----

@@ -5,5 +5,7 @@
     '''^\.?gitleaks.toml$''',
     '''webserver.toml$''',
     '''Podder.toml$''',
+    '''demo_key$''',
+    '''demo_key.pub$''',
   ]
 

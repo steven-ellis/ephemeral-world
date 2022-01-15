@@ -34,6 +34,9 @@ You can now
 - try out link:docs/ImageBuilder.adoc[Image Builder]
 - or link:docs/Buildah.adoc[buildah]
 
+I've also supplied the link:keys/demo_key.pub[public] and link:keys/demo_key[private keys] we're using to SSH
+into the generated OS Images
+
 == Issues / Gotchas
 
 === Running out of space

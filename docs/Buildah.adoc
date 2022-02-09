@@ -7,6 +7,20 @@ We're going to use the RHEL UBI minimal images to build these demo containers
 as these are freely redistributable base container images that are well maintained
 by Red Hat. 
 
+== Pre-cache the base UBI Containers
+
+This is a useful pre-step if you're time constrained when using this content as a demo.
+You can pre-cache the Red Hat provided UBI base images allowing the build steps below to execute quicker.
+
+
+[source,bash]
+----
+buildah pull registry.access.redhat.com/ubi8/ubi-minimal
+buildah pull registry.access.redhat.com/ubi8/ubi-micro
+
+buildah images
+----
+
 == Simple webserver container
 
 On our build VM we will create a very simple 
@@ -142,6 +156,18 @@ Password: {REGISTRY-SERVICE-ACCOUNT-PASSWORD}
 
 
 buildah pull registry.redhat.io/rhel8/httpd-24
+----
+
+== Environment Cleanup
+This will perform a full resource clean up of the container enviroment.
+It is pretty brute force so don't use it on an environment with working containers.
+
+[source,bash]
+----
+podman stop -a
+buildah rm  -a
+buildah rmi -a
+podman system prune
 ----
 
 == Bugs / Issues
